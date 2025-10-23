@@ -1,140 +1,59 @@
+import java.util.ArrayList;
+import java.util.List;
 
-public class Queen{
+public class Queen {
 
+    public static boolean isSafe(int[][] board, int row, int col) {
+        int N = board.length;
+        for (int i = 0; i < col; i++)
+            if (board[row][i] == 1)
+                return false;
 
-	/**
-	*	Check if a chessboard is safe if placing a Queen in row,col
-	*	@param chessboard current state of the board to check
-	* 	@param row place a Queen at this row
-	*	@param col place a Queen at this col
-	*	@return true if the board is still safe, false otherwise
-	*/
+        for (int i = row, j = col; i >= 0 && j >= 0; i--, j--)
+            if (board[i][j] == 1)
+                return false;
 
-	public static boolean isSafe(int[][] chessboard, int row, int col) {
-   	
-		int N = chessboard.length;     
-		
-		//check row
-		for(int i=0; i < N ; i++) {
-			if(chessboard[row][i] == 1) {
-				return false;
-			}
-		}
-      
-    //check column
-    for(int i=0; i < N; i++) {
-      if(chessboard[i][col] == 1) {
-        return false;
-      }
+        for (int i = row, j = col; i < N && j >= 0; i++, j--)
+            if (board[i][j] == 1)
+                return false;
+
+        return true;
     }
 
-    //check upper left diagonal
-    int r = row;
-    for(int c=col; c >= 0 && r >= 0; c--, r--) {
-      if(chessboard[r][c] == 1) {
-        return false;
-      }
-    }
-      
-    //check upper right diagonal
-    r = row;
-    for(int c=col; c < N && r >= 0; r--, c++) {
-      if(chessboard[r][c] == 1) {
-        return false;
-      }
-    }
-      
-    //check lower left diagonal
-    r = row;
-    for(int c=col; c>=0 && r < N; r++, c--) {
-        if(chessboard[r][c] == 1) {
-          return false;
-      }
+    public static void solveNQueens(int[][] board, int col, List<int[][]> results) {
+        int N = board.length;
+        if (col == N) {
+            int[][] copy = new int[N][N];
+            for (int i = 0; i < N; i++)
+                copy[i] = board[i].clone();
+            results.add(copy);
+            return;
+        }
+
+        for (int i = 0; i < N; i++) {
+            if (isSafe(board, i, col)) {
+                board[i][col] = 1;
+                solveNQueens(board, col + 1, results);
+                board[i][col] = 0;
+            }
+        }
     }
 
-    //check lower right diagonal
-    for(int c=col; c < N && r < N; c++, r++) {
-      if(chessboard[r][c] == 1) {
-        return false;
-      }
+    public static void main(String[] args) {
+        int N = 4;
+        int[][] board = new int[N][N];
+        List<int[][]> results = new ArrayList<>();
+
+        solveNQueens(board, 0, results);
+
+        System.out.println("Total solutions for " + N + " queens: " + results.size());
+        for (int[][] b : results) {
+            for (int[] row : b) {
+                for (int cell : row)
+                    System.out.print(cell + " ");
+                System.out.println();
+            }
+            System.out.println();
+        }
     }
-
-    return true;
-
-  }
-
-
-	/**
-	*	print the chessboard
-	*	@param chessboard the current state of the board
-	*/
- 
-	public static void print(int [][] chessboard){
-		
-    for(int i = 0; i <	chessboard.length; i ++){
-      System.out.print("--");
-    }
-    System.out.println();
-		for (int[] row: chessboard){
-			for(int i = 0; i < row.length; i++){
-				System.out.print((row[i]==1)? "Q ": ". ");
-			}
-      System.out.println();
-		}
-
-    for(int i = 0; i <	chessboard.length; i ++){
-        System.out.print("--");
-    }
-    System.out.println();
-
-	}
-
-	/**
-	*	reursive method to place queens in the chessboard
-	*	@param chessboard the current state of the board
-	*	@param queens number of queens left to be place
-	*/
-
-	public static void NQueen(int[][] chessboard, int queens){
-
-      int N = chessboard.length;
-		//System.out.println (queens);
-		if (queens == 0){
-			print(chessboard);
-		}
-		else {
-			for(int i = 0; i < N; i++){
-				
-				if(isSafe(chessboard, N - queens,i )){
-         
-					chessboard[N - queens][i]=1;
-					//print(chessboard);
-					NQueen(chessboard, queens-1);
-					chessboard[N - queens][i]= 0;
-					//System.out.println("backtrack");
-					//print(chessboard);
-				}
-			}
-		}
-	}
-
-
-
-
-	public static void main(String [] args){
-
-		if(args.length !=1){
-			System.out.println("Usage: java Queen N");
-			return;
-		}
-		
-		int N = Integer.parseInt(args[0]);
-		int [][]  board = new int[N][N];
-		
-		NQueen(board,N);
-
-
-
-	}
-
 }

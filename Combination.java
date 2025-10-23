@@ -4,73 +4,45 @@ import java.util.List;
 
 public class Combination{
 
-	/**
-	* copy an ArrayList
-	* @param source source list
-	* @return destination list
-	*/
+    public static ArrayList<String> copy(ArrayList<String> source) {
+        ArrayList<String> destination = new ArrayList<>();
+        for (String s : source) {
+            destination.add(s);
+        }
+        return destination;
+    }
 
-	public static ArrayList<String> copy(ArrayList<String> source){
-		ArrayList<String> destination = new ArrayList<>();
-		
-		for(int i = 0; i < source.size(); i ++){
-			destination.add(source.get(i));
-		}
-		return destination;
-	}
+    public static void combination(ArrayList<String> solution, ArrayList<String> remaining, int k, List<List<String>> results) {
+        if (solution.size() == k) {
+            results.add(new ArrayList<>(solution));
+            return;
+        }
+        if (remaining.size() == 0) {
+            return;
+        }
 
+        String name = remaining.remove(0);
 
+        ArrayList<String> newRemaining = copy(remaining);
+        ArrayList<String> newSolution = copy(solution);
+        combination(newSolution, newRemaining, k, results);
 
-	/**
-	* method to print out k combination of a list
-	* @param solution current solution
-	* @param remaining remaining options
-	* @param k choose k of
-	*/
- 
-	public static void combination(ArrayList<String> solution, ArrayList<String> remaining, int k){
-		if(solution.size() == k){
-			for(int i = 0; i < k;i++){
-				System.out.print(solution.get(i)+ " ");
-			}	
-			System.out.println();
-		}
+        newRemaining = copy(remaining);
+        newSolution = copy(solution);
+        newSolution.add(name);
+        combination(newSolution, newRemaining, k, results);
+    }
 
-		else if (remaining.size()==0){
-				return;
-		}
-		else{
+    public static void main(String[] args) {
+        String[] names = {"Roberts", "Thomas", "Alito", "Sotomayor", "Kagan", "Gorsuch", "Kavanaugh", "Barrett", "Jackson"};
 
-			String name = remaining.remove(0);
-		
-			//setup new lists to pass to the rerucisve method
-			ArrayList<String> newRemaining = copy(remaining);
-			ArrayList<String> newSolution = copy(solution);
+        ArrayList<String> justices = new ArrayList<>(Arrays.asList(names));
+        ArrayList<String> majority = new ArrayList<>();
+        List<List<String>> results = new ArrayList<>();
 
-	
-			combination(newSolution, newRemaining, k);	
+        combination(majority, justices, 5, results);
 
-			//setup new lists to pass to the recursive method
-			newRemaining = copy(remaining);
-			newSolution = copy(solution);
-			//add name to solution
-			newSolution.add(name);
-
-			combination(newSolution, newRemaining, k);
-
-		}
-	}
-
-	public static void main(String [] args){
-
-		String[] names =  {"Roberts", "Thomas", "Alito", "Sotomayor", "Kagan", "Gorsuch", "Kavanaugh", "Barrett", "Jackson"};
-
-		ArrayList<String> justices = new ArrayList<> (Arrays.asList(names));
-
-		ArrayList<String> majority = new ArrayList<>();
-
-		combination(majority, justices, 5); 
-
-	}
-
+        System.out.println("Total combinations: " + results.size());
+        System.out.println("Example combinations: " + results.subList(0, 5)); // print first 5
+    }
 }

@@ -1,44 +1,33 @@
-public class Word{
+import java.util.ArrayList;
+import java.util.List;
 
+public class Word {
 
-	/**
-	* @param solution current word
-	* @param remaining remaining letters
-	*/
+    public static void permutation(String solution, String remaining, List<String> results) {
+        if (remaining.length() == 0) {
+            results.add(solution);
+        } else {
+            for (int i = 0; i < remaining.length(); i++) {
+                char ch = remaining.charAt(i);
+                String nextRemaining = remaining.substring(0, i) + remaining.substring(i + 1);
+                String nextSolution = solution + ch;
+                permutation(nextSolution, nextRemaining, results);
+            }
+        }
+    }
 
-	public static void permutation(String solution, String remaining){
-		if(remaining.length() == 0){
-			System.out.println(solution);
-		}
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.out.println("Usage: java WordList yourword");
+            return;
+        }
 
-		else{
-			for(int i =0 ;i < remaining.length(); i++){
+        String word = args[0];
+        List<String> results = new ArrayList<>();  // ? this defines 'results'
 
-				char ch = remaining.charAt(i);
-	
-				//create new strings to pass to the recursive method			
-				String  nextRemaining = remaining.substring(0, i) + remaining.substring(i+1);
-				String nextSolution = solution + ch;
-				
-				permutation(nextSolution, nextRemaining);
+        permutation("", word, results);
 
-			}
-		}
-	}
-
-	public static void main(String [] args){
-
-		if(args.length != 1){
-			System.out.println("Usage: java Word yourword");
-			return;
-		}
-		
-		String word = new String(args[0]);
-
-		String empty = new String("");
-
-		permutation(empty, word);
-
-	}
-
+        System.out.println("All permutations of " + word + ":");
+        System.out.println(results);
+    }
 }
